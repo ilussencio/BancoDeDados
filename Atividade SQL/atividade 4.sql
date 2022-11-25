@@ -20,7 +20,6 @@ from funcionario f join cargo c on f.cod_cargo = c.cod_cargo
 group by d.nome
 order by soma desc;
 
-
 select d.nome, min(f.data_adm) menor, max(f.data_adm) maior
 from funcionario f join departamento d on d.cod_depto = f.cod_depto
 group by d.nome;

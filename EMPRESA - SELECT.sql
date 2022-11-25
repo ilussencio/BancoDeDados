@@ -1,5 +1,6 @@
 use empresa;
 show tables;
+
 #TABELA CARGO/DEPARTAMENTO/FUNCIONARIO
 select 
 * from 
@@ -128,6 +129,24 @@ where year(data_adm) = 2009 and sexo = 'F';
 select nome, cod_cargo, data_adm
 from funcionario
 where month(data_adm) = 2;
+
+select f.nome
+from funcionario f, departamento d
+where f.cod_depto = d.cod_depto and d.cod_depto = 'Informática';
+
+select f.nome
+from funcionario f inner join departamento d on f.cod_depto = d.cod_depto
+where d.nome = 'Informática';
+
+select f.nome, f.data_adm, c.nome, d.nome
+from funcionario f, cargo c, departamento d
+where f.cod_cargo = c.cod_cargo and f.cod_depto = d.cod_depto;
+
+select f.nome, f.data_adm, c.nome, d.nome
+from funcionario f inner join cargo c on f.cod_cargo = c.cod_cargo inner join departamento d on f.cod_depto = d.cod_depto
+where d.nome = 'Informática';
+
+;
 
 select * from departamento;
 select * from cargo;
