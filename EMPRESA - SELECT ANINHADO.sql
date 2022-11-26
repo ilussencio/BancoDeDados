@@ -1,5 +1,7 @@
 use empresa;
 
+set sql_safe_updates = 0;
+
 select nome
 from departamento
 where cod_depto in (
@@ -36,27 +38,27 @@ select f.nome, f.sexo
 from funcionario f
 where f.cod_cargo = (
     select c.cod_cargo from cargo c where c.nome = 'Desenvolvedor' and c.nivel = 'Pleno'
-    )
+    );
 
 -- Listar os dados dos funcionarios, exceto daqueles que sao atendentes
 select f.*
 from funcionario f
 where f.cod_cargo != (
     select c.cod_cargo from cargo c where c.nome = 'Atendente'
-    )
+    );
 
 -- Listar o nome, sexo e data de admissão dos funcionario que foram contratador apos o Gabriel Pereira
 select f.nome, f.sexo, f.data_adm
 from funcionario f
 where f.data_adm > (
     select data_adm from funcionario where nome = 'Gabriel Pereira'
-    )
+    );
 
 -- Listar os dados do funcionario contratado mais recentemente pela empresa
 select * from funcionario
 where data_adm = (
     select max(data_adm) from funcionario
-          )
+          );
 
 -- Listar os dados dos funcionarios que recebem o menor salario na empresa
 select f.*
@@ -83,4 +85,56 @@ where f.cod_cargo = c.cod_cargo and c.salario = (
     where f.cod_cargo = c.cod_cargo and f.sexo = 'F'
     )
 and f.sexo = 'F';
+
+select d.*
+from departamento d
+where exists(
+    select * from funcionario f
+    where d.cod_depto = f.cod_depto
+          );
+
+
+-- Listar as informacoes dos cargos que nao possuem funcionarios
+select c.*
+from cargo c
+where not exists(
+    select * from funcionario f where f.cod_cargo = c.cod_cargo
+    );
+
+-- Criar uma tabela custocargo com o código, nome dos cargos e o custo efetivo por cargo(que e o dobro do salario, mais 10% do valor mesmo)
+create table custo_cargo(
+    cod_cargo int auto_increment,
+    nome varchar(40),
+    nivel varchar(40),
+    custo_efetivo float,
+    primary key (cod_cargo)
+);
+
+insert into custo_cargo(cod_cargo, nome, nivel, custo_efetivo)
+select cod_cargo, nome, nivel, (salario*2.1)
+from cargo;
+
+-- Atualizar o nome do cargo de contador para gerente contabil
+update cargo set nome = 'Gerente Contábil' where nome = 'Contador';
+
+-- Atualizar o nome do cargo e o salario do Atendente para Assistente de telemarketing, com novo salario de 1200
+update cargo set nome = 'Assistente de Telemarketing', salario = 1200 where nome = 'Atendente';
+
+use empresa;
+-- Atualiza o salario de todos dos cargos nivel jr em 15%
+update cargo set salario = salario * 1.15 where nivel = 'JR';
+
+-- Atualizar as siglas dos departamentos incluindo a letra D no inicio
+update departamento
+set nome = concat('D', sigla);
+
+insert into departamento(cod_depto,nome,sigla)
+values (5,'Marketing','MKT'),
+       (6,'Logistica','LOG');
+
+-- Os departamentos de Marketing e Comercial não vão mais fazer parte da empresa, dê o comando para excluir estes departamentos
+delete from departamento where nome in('Marketing');
+delete from departamento where nome in('Logistica');
+
+delete from departamento where nome in('Informatica');
 

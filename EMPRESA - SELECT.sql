@@ -145,9 +145,3 @@ where f.cod_cargo = c.cod_cargo and f.cod_depto = d.cod_depto;
 select f.nome, f.data_adm, c.nome, d.nome
 from funcionario f inner join cargo c on f.cod_cargo = c.cod_cargo inner join departamento d on f.cod_depto = d.cod_depto
 where d.nome = 'Informática';
-
-;
-
-select * from departamento;
-select * from cargo;
-select * from funcionario;
